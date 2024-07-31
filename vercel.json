@@ -17,5 +17,8 @@
       },
       "dest": "/"
     }
-  ]
+  ],
+  "functions": {
+    "timeout": 10 // Time in seconds
+  }
 }
