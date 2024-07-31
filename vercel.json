@@ -19,6 +19,14 @@
     }
   ],
   "functions": {
-    "timeout": 10 
+    "api/test.js": {
+      "maxDuration": 30 
+    },
+    "api/*.js": {
+      "maxDuration": 15 
+    },
+    "src/api/*.js": {
+      "maxDuration": 25 
+    }
   }
 }
