@@ -48,7 +48,7 @@ const connectDB = async () => {
 connectDB();
 
 app.get("/", (req, res) => {
-  res.send("Welcome to server");
+  res.json("Welcome to server");
 });
 
 // Serve static files from the 'uploads' directory
