@@ -23,13 +23,13 @@ const ReviewModel = require("./models/Review");
 require("dotenv").config();
 
 const app = express();
-app.use(express.json());
+
 app.use(cors({
-  origin: ["https://creativedevops.com"],
+  origin: "https://creativedevops.com",
   methods: ["POST","GET"],
   credentials: true
 }));
-
+app.use(express.json());
 const port = process.env.PORT || 5000;
 const baseURL = process.env.MONGO_URL;
 
