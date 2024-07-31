@@ -25,7 +25,7 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ["https://creativedevops.com/real-estate-portfolio"],
+  origin: ["https://creativedevops.com"],
   methods: ["POST","GET"],
   credentials: true
 }));
