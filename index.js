@@ -121,7 +121,7 @@ app.post('/forgot-password', async (req, res) => {
     await user.save();
 
     // Send the reset email
-    const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+    const resetUrl = `https://creativedevops.com/real-estate-portfolio/reset-password/${resetToken}`;
     const mailOptions = {
       to: user.email,
       from: process.env.EMAIL_USER,
