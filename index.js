@@ -26,9 +26,10 @@ const app = express();
 
 app.use(cors({
   origin: "https://creativedevops.com",
-  methods: ["POST","GET"],
+  methods: ["POST","GET", "PUT", "DELETE"],
   credentials: true
 }));
+
 app.use(express.json());
 const port = process.env.PORT || 5000;
 const baseURL = process.env.MONGO_URL;
@@ -342,27 +343,34 @@ app.get("/listing/:id/review", async (req, res) => {
   }
 });
 
-// Change password endpoint
-app.post('/change-password/:userId', (req, res) => {
+app.post('/change-password/:userId', async (req, res) => {
   const { userId } = req.params;
   const { currentPassword, newPassword } = req.body;
 
-  UserModel.findById(userId)
-    .then(user => {
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      if (user.password !== currentPassword) {
-        return res.status(401).json({ message: 'Current password is incorrect' });
-      }
-      user.password = newPassword;
-      return user.save();
-    })
-    .then(() => res.status(200).json({ message: 'Password changed successfully!' }))
-    .catch(error => {
-      console.error('Error changing password:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    });
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if the current password is correct
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully!' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
 
 // Update user details route
