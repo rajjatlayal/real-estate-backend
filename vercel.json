@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "*.js",
-      "use": "@vercel/static-build"
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -15,7 +15,7 @@
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
         "Access-Control-Allow-Credentials": "true"
       },
-      "dest": "/index.html"
+      "dest": "/"
     }
   ]
 }
