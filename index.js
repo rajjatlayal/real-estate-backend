@@ -20,7 +20,6 @@ const CompanyModel = require('./models/Company');
 const UpcomingProject = require("./models/UpcomingProjects");
 const NeighbourModel = require("./models/NeighbourModel");
 const ReviewModel = require("./models/Review");
-const { put: vercelBlobPut } = require('@vercel/blob');
 require("dotenv").config();
 
 const app = express();
@@ -375,86 +374,61 @@ app.post('/change-password/:userId', async (req, res) => {
 });
 
 // Update user details route
-// app.put("/users/:id", upload.single("file"), async (req, res) => {
-//   const userId = req.params.id;
-//   const updateData = req.body;
-
-//   if (req.file) {
-//     updateData.profileImage = req.file.filename;
-//   }
-
-//   try {
-//     const updatedUser = await UserModel.findByIdAndUpdate(userId, updateData, { new: true });
-//     if (!updatedUser) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     res.json(updatedUser);
-//   } catch (error) {
-//     console.error("Error updating user details:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
-
-// const handleMultipartData = upload.single('profileImage');
-
-// Create or update account details
-// app.post('/account-details', handleMultipartData, async (req, res) => {
-//   const { userId, fname, lname, username, email, phone, address } = req.body;
-//   const profileImage = req.file ? req.file.filename : null;
-
-//   try {
-//     let accountDetails = await AccountDetailsModel.findOne({ userId: userId });
-//     if (accountDetails) {
-//       accountDetails.fname = fname;
-//       accountDetails.lname = lname;
-//       accountDetails.username = username;
-//       accountDetails.email = email;
-//       accountDetails.phone = phone;
-//       accountDetails.address = address;
-//       if (profileImage) {
-//         accountDetails.profileImage = profileImage;
-//       }
-//       accountDetails = await accountDetails.save();
-//     } else {
-//       accountDetails = await AccountDetailsModel.create({
-//         userId,
-//         fname,
-//         lname,
-//         username,
-//         email,
-//         phone,
-//         address,
-//         profileImage,
-//       });
-//     }
-//     res.status(200).json(accountDetails);
-//   } catch (error) {
-//     console.error('Error updating account details:', error);
-//     res.status(500).json({ message: 'Internal Server Error' });
-//   }
-// });
-
-
-app.put('/users/:id', upload.single('file'), async (req, res) => {
+app.put("/users/:id", upload.single("file"), async (req, res) => {
   const userId = req.params.id;
   const updateData = req.body;
 
   if (req.file) {
-    const fileData = req.file.buffer;
-    const blob = await vercelBlobPut('uploads/' + req.file.originalname, fileData, {
-      access: 'public',
-    });
-    updateData.profileImage = blob.url;
+    updateData.profileImage = req.file.filename;
   }
 
   try {
     const updatedUser = await UserModel.findByIdAndUpdate(userId, updateData, { new: true });
     if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
     res.json(updatedUser);
   } catch (error) {
-    console.error('Error updating user details:', error);
+    console.error("Error updating user details:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+const handleMultipartData = upload.single('profileImage');
+
+// Create or update account details
+app.post('/account-details', handleMultipartData, async (req, res) => {
+  const { userId, fname, lname, username, email, phone, address } = req.body;
+  const profileImage = req.file ? req.file.filename : null;
+
+  try {
+    let accountDetails = await AccountDetailsModel.findOne({ userId: userId });
+    if (accountDetails) {
+      accountDetails.fname = fname;
+      accountDetails.lname = lname;
+      accountDetails.username = username;
+      accountDetails.email = email;
+      accountDetails.phone = phone;
+      accountDetails.address = address;
+      if (profileImage) {
+        accountDetails.profileImage = profileImage;
+      }
+      accountDetails = await accountDetails.save();
+    } else {
+      accountDetails = await AccountDetailsModel.create({
+        userId,
+        fname,
+        lname,
+        username,
+        email,
+        phone,
+        address,
+        profileImage,
+      });
+    }
+    res.status(200).json(accountDetails);
+  } catch (error) {
+    console.error('Error updating account details:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
